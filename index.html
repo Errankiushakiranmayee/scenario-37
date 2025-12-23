@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SonicShield Pro | Safety Prototype</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg: #0a0a0c;
+            --surface: #16161a;
+            --accent-orange: #ff9f1c;
+            --danger: #ff4d4d;
+            --safe: #2ecc71;
+            --text: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 400px;
+            background: var(--surface);
+            border-radius: 24px;
+            border: 1px solid #2d2d35;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+        }
+
+        /* Vibration Animation */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        .shaking {
+            animation: shake 0.2s;
+            animation-iteration-count: infinite;
+            border: 3px solid var(--danger) !important;
+        }
+
+        /* Header */
+        header {
+            padding: 20px;
+            background: linear-gradient(to bottom, #1f1f25, var(--surface));
+            text-align: center;
+            border-bottom: 1px solid #2d2d35;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-orange);
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+
+        /* Main Display */
+        .monitor-section {
+            padding: 40px 20px;
+            text-align: center;
+            background-image: linear-gradient(rgba(22, 22, 26, 0.9), rgba(22, 22, 26, 0.9)), 
+                              url('https://images.unsplash.com/photo-1565106430482-8f6e74349ca1?auto=format&fit=crop&w=500&q=80');
+            background-size: cover;
+        }
+
+        .db-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid #333;
+            transition: 0.3s;
+        }
+
+        .db-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Map Section */
+        .map-section {
+            padding: 20px;
+        }
+
+        .floor-plan {
+            height: 140px;
+            background-image: url('https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=500&q=80');
+            background-size: cover;
+            border-radius: 15px;
+            position: relative;
+            filter: brightness(0.6);
+            border: 1px solid #333;
+        }
+
+        .zone-dot {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--safe);
+            box-shadow: 0 0 15px var(--safe);
+        }
+
+        /* Buttons */
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 0 20px 20px;
+        }
+
+        .btn {
+            background: #25252b;
+            border: 1px solid #3a3a42;
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn i { color: var(--accent-orange); margin-bottom: 8px; display: block; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container" id="app">
+        <header>
+            <div class="logo"><i class="fas fa-tower-broadcast"></i> SONICSHIELD</div>
+        </header>
+
+        <main class="monitor-section">
+            <div class="db-box" id="dbBox">
+                <span class="db-value" id="dbDisplay">72</span>
+                <span class="status-pill" id="statusLabel" style="background: var(--safe); color: #000;">Safe Environment</span>
+            </div>
+            <p id="alertMsg" style="margin-top: 15px; font-size: 0.9rem; color: #888;">Monitoring active...</p>
+        </main>
+
+        <div class="map-section">
+            <p style="font-size: 11px; color: #666; margin-bottom: 10px; font-weight: bold;">LIVE WORKSPACE HEATMAP</p>
+            <div class="floor-plan">
+                <div class="zone-dot" style="top: 30%; left: 20%;"></div>
+                <div class="zone-dot" id="activeZone" style="top: 55%; left: 65%;"></div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <div class="btn"><i class="fas fa-headset"></i> PPE LOG</div>
+            <div class="btn"><i class="fas fa-clipboard-check"></i> CHECKLIST</div>
+        </div>
+    </div>
+
+    <script>
+        const dbDisplay = document.getElementById('dbDisplay');
+        const dbBox = document.getElementById('dbBox');
+        const statusLabel = document.getElementById('statusLabel');
+        const alertMsg = document.getElementById('alertMsg');
+        const activeZone = document.getElementById('activeZone');
+
+        function simulateNoise() {
+            // Generate random dB for the demo
+            const noise = Math.floor(Math.random() * (100 - 65 + 1)) + 65;
+            dbDisplay.innerText = noise;
+
+            if (noise > 85) {
+                // EXTREME NOISE STATE
+                dbBox.classList.add('shaking');
+                dbDisplay.style.color = "var(--danger)";
+                statusLabel.innerText = "DANGER: HIGH NOISE";
+                statusLabel.style.background = "var(--danger)";
+                alertMsg.innerText = "⚠️ PUT ON EAR PROTECTION NOW!";
+                alertMsg.style.color = "var(--danger)";
+                activeZone.style.background = "var(--danger)";
+                activeZone.style.boxShadow = "0 0 20px var(--danger)";
+                
+                // Real Vibration (if supported by the device)
+                if ("vibrate" in navigator) {
+                    navigator.vibrate(200);
+                }
+            } else {
+                // SAFE STATE
+                dbBox.classList.remove('shaking');
+                dbDisplay.style.color = "white";
+                statusLabel.innerText = "Safe Environment";
+                statusLabel.style.background = "var(--safe)";
+                alertMsg.innerText = "Level within safe limits.";
+                alertMsg.style.color = "#888";
+                activeZone.style.background = "var(--safe)";
+                activeZone.style.boxShadow = "0 0 15px var(--safe)";
+            }
+        }
+
+        // Run simulation every 2.5 seconds
+        setInterval(simulateNoise, 2500);
+    </script>
+</body>
+</html>
