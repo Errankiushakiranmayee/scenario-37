@@ -3,227 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SonicShield Pro | Safety Prototype</title>
+    <title>SonicShield Pro | Safety System</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
     <style>
         :root {
-            --bg: #0a0a0c;
-            --surface: #16161a;
-            --accent-orange: #ff9f1c;
-            --danger: #ff4d4d;
-            --safe: #2ecc71;
-            --text: #ffffff;
+            /* INDUSTRIAL COLOR PALETTE */
+            --bg-color: #0b0e14;        /* Deep Navy/Black */
+            --card-bg: #161b22;         /* Dark Slate */
+            --safety-orange: #ff8c00;   /* Warning Orange */
+            --danger-red: #f85149;
+            --success-green: #3fb950;
+            --text-white: #f0f6fc;
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--text);
+            background-color: var(--bg-color);
+            color: var(--text-white);
             font-family: 'Inter', sans-serif;
+            margin: 0;
             display: flex;
             justify-content: center;
-            padding: 20px;
-            margin: 0;
+            padding: 10px;
         }
 
         .app-container {
             width: 100%;
             max-width: 400px;
-            background: var(--surface);
-            border-radius: 24px;
-            border: 1px solid #2d2d35;
-            overflow: hidden;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-        }
-
-        /* Vibration Animation */
-        @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-1px, -2px) rotate(-1deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            30% { transform: translate(3px, 2px) rotate(0deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            50% { transform: translate(-1px, 2px) rotate(-1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            70% { transform: translate(3px, 1px) rotate(-1deg); }
-            80% { transform: translate(-1px, -1px) rotate(1deg); }
-            90% { transform: translate(1px, 2px) rotate(0deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
-        }
-
-        .shaking {
-            animation: shake 0.2s;
-            animation-iteration-count: infinite;
-            border: 3px solid var(--danger) !important;
-        }
-
-        /* Header */
-        header {
-            padding: 20px;
-            background: linear-gradient(to bottom, #1f1f25, var(--surface));
-            text-align: center;
-            border-bottom: 1px solid #2d2d35;
-        }
-
-        .logo {
-            font-family: 'Orbitron', sans-serif;
-            color: var(--accent-orange);
-            font-size: 1.2rem;
-            letter-spacing: 2px;
-        }
-
-        /* Main Display */
-        .monitor-section {
-            padding: 40px 20px;
-            text-align: center;
-            background-image: linear-gradient(rgba(22, 22, 26, 0.9), rgba(22, 22, 26, 0.9)), 
-                              url('https://images.unsplash.com/photo-1565106430482-8f6e74349ca1?auto=format&fit=crop&w=500&q=80');
-            background-size: cover;
-        }
-
-        .db-box {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 30px;
+            background: var(--card-bg);
+            border: 1px solid #30363d;
             border-radius: 20px;
-            border: 1px solid #333;
+            min-height: 650px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+
+        /* Top Navigation */
+        nav {
+            display: flex;
+            background: #0d1117;
+            padding: 15px 5px;
+            border-bottom: 1px solid var(--safety-orange);
+        }
+
+        nav button {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #8b949e;
+            font-weight: bold;
+            font-size: 11px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
             transition: 0.3s;
         }
 
-        .db-value {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 4rem;
-            display: block;
-            margin-bottom: 5px;
-        }
+        nav button.active { color: var(--safety-orange); }
 
-        .status-pill {
-            display: inline-block;
-            padding: 6px 15px;
-            border-radius: 50px;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        /* General Page Styling */
+        .page { display: none; padding: 20px; animation: slideUp 0.4s ease; }
+        .page.active { display: block; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* Map Section */
-        .map-section {
-            padding: 20px;
-        }
+        h2 { color: var(--safety-orange); font-family: 'Orbitron', sans-serif; font-size: 1.2rem; margin-bottom: 20px; }
 
-        .floor-plan {
-            height: 140px;
-            background-image: url('https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=500&q=80');
-            background-size: cover;
-            border-radius: 15px;
-            position: relative;
-            filter: brightness(0.6);
-            border: 1px solid #333;
-        }
-
-        .zone-dot {
-            position: absolute;
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            background: var(--safe);
-            box-shadow: 0 0 15px var(--safe);
-        }
-
-        /* Buttons */
-        .actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            padding: 0 20px 20px;
-        }
-
-        .btn {
-            background: #25252b;
-            border: 1px solid #3a3a42;
-            color: white;
-            padding: 15px;
+        /* Page 1: Risk Calculator */
+        .hero-img {
+            width: 100%;
+            height: 150px;
             border-radius: 12px;
-            text-align: center;
-            cursor: pointer;
-            font-weight: 600;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 1px solid #30363d;
         }
 
-        .btn i { color: var(--accent-orange); margin-bottom: 8px; display: block; font-size: 1.2rem; }
+        .input-card {
+            background: #0d1117;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        input[type="number"] {
+            width: 80%;
+            padding: 15px;
+            background: #161b22;
+            border: 2px solid #30363d;
+            color: white;
+            font-size: 24px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .calc-btn {
+            background: var(--safety-orange);
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .risk-alert {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            font-weight: bold;
+        }
+
+        /* Page 2: Guidelines */
+        .guide-box {
+            display: flex;
+            align-items: center;
+            background: #0d1117;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            border-left: 4px solid var(--safety-orange);
+        }
+        .guide-box i { font-size: 24px; margin-right: 15px; color: var(--safety-orange); }
+
+        /* Page 3: Quiz */
+        .quiz-option {
+            background: #21262d;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 1px solid #30363d;
+            transition: 0.2s;
+        }
+        .quiz-option:hover { border-color: var(--safety-orange); }
+        .correct { background: var(--success-green) !important; color: white; }
+        .wrong { background: var(--danger-red) !important; color: white; }
+
     </style>
 </head>
 <body>
 
-    <div class="app-container" id="app">
-        <header>
-            <div class="logo"><i class="fas fa-tower-broadcast"></i> SONICSHIELD</div>
-        </header>
+<div class="app-container">
+    <nav>
+        <button id="n1" class="active" onclick="tab(1)"><i class="fas fa-chart-line"></i><br>RISK</button>
+        <button id="n2" onclick="tab(2)"><i class="fas fa-shield-alt"></i><br>GUIDES</button>
+        <button id="n3" onclick="tab(3)"><i class="fas fa-question-circle"></i><br>QUIZ</button>
+    </nav>
 
-        <main class="monitor-section">
-            <div class="db-box" id="dbBox">
-                <span class="db-value" id="dbDisplay">72</span>
-                <span class="status-pill" id="statusLabel" style="background: var(--safe); color: #000;">Safe Environment</span>
-            </div>
-            <p id="alertMsg" style="margin-top: 15px; font-size: 0.9rem; color: #888;">Monitoring active...</p>
-        </main>
-
-        <div class="map-section">
-            <p style="font-size: 11px; color: #666; margin-bottom: 10px; font-weight: bold;">LIVE WORKSPACE HEATMAP</p>
-            <div class="floor-plan">
-                <div class="zone-dot" style="top: 30%; left: 20%;"></div>
-                <div class="zone-dot" id="activeZone" style="top: 55%; left: 65%;"></div>
-            </div>
-        </div>
-
-        <div class="actions">
-            <div class="btn"><i class="fas fa-headset"></i> PPE LOG</div>
-            <div class="btn"><i class="fas fa-clipboard-check"></i> CHECKLIST</div>
+    <div id="p1" class="page active">
+        <img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=500&q=80" class="hero-img">
+        <h2>Risk Assessment</h2>
+        <div class="input-card">
+            <p style="font-size: 13px; color: #8b949e;">Enter Current Noise Level (dB):</p>
+            <input type="number" id="dbValue" placeholder="e.g. 85">
+            <button class="calc-btn" onclick="calcRisk()">ANALYZE RISK</button>
+            <div id="riskResult" class="risk-alert"></div>
         </div>
     </div>
 
-    <script>
-        const dbDisplay = document.getElementById('dbDisplay');
-        const dbBox = document.getElementById('dbBox');
-        const statusLabel = document.getElementById('statusLabel');
-        const alertMsg = document.getElementById('alertMsg');
-        const activeZone = document.getElementById('activeZone');
+    <div id="p2" class="page">
+        <img src="https://images.unsplash.com/photo-1590634315830-9092497645f5?auto=format&fit=crop&w=500&q=80" class="hero-img">
+        <h2>Safety Protocols</h2>
+        <div class="guide-box"><i class="fas fa-headset"></i><div><b>PPE Check:</b> Wear earmuffs for levels above 85dB.</div></div>
+        <div class="guide-box"><i class="fas fa-clock"></i><div><b>Time Limit:</b> Max 2 hours in Red Zones.</div></div>
+        <div class="guide-box"><i class="fas fa-walking"></i><div><b>Safe Distance:</b> Stay 5m away from active drills.</div></div>
+    </div>
 
-        function simulateNoise() {
-            // Generate random dB for the demo
-            const noise = Math.floor(Math.random() * (100 - 65 + 1)) + 65;
-            dbDisplay.innerText = noise;
+    <div id="p3" class="page">
+        <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=500&q=80" class="hero-img">
+        <h2>Knowledge Test</h2>
+        <p id="qText">What is the warning color for 85dB noise?</p>
+        <div id="options">
+            <div class="quiz-option" onclick="ans(this, false)">Blue</div>
+            <div class="quiz-option" onclick="ans(this, true)">Orange / Red</div>
+            <div class="quiz-option" onclick="ans(this, false)">Green</div>
+        </div>
+        <p id="feedback" style="text-align: center; font-weight: bold; margin-top: 15px;"></p>
+    </div>
+</div>
 
-            if (noise > 85) {
-                // EXTREME NOISE STATE
-                dbBox.classList.add('shaking');
-                dbDisplay.style.color = "var(--danger)";
-                statusLabel.innerText = "DANGER: HIGH NOISE";
-                statusLabel.style.background = "var(--danger)";
-                alertMsg.innerText = "⚠️ PUT ON EAR PROTECTION NOW!";
-                alertMsg.style.color = "var(--danger)";
-                activeZone.style.background = "var(--danger)";
-                activeZone.style.boxShadow = "0 0 20px var(--danger)";
-                
-                // Real Vibration (if supported by the device)
-                if ("vibrate" in navigator) {
-                    navigator.vibrate(200);
-                }
-            } else {
-                // SAFE STATE
-                dbBox.classList.remove('shaking');
-                dbDisplay.style.color = "white";
-                statusLabel.innerText = "Safe Environment";
-                statusLabel.style.background = "var(--safe)";
-                alertMsg.innerText = "Level within safe limits.";
-                alertMsg.style.color = "#888";
-                activeZone.style.background = "var(--safe)";
-                activeZone.style.boxShadow = "0 0 15px var(--safe)";
-            }
+<script>
+    function tab(n) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById('p'+n).classList.add('active');
+        document.getElementById('n'+n).classList.add('active');
+    }
+
+    function calcRisk() {
+        const val = document.getElementById('dbValue').value;
+        const res = document.getElementById('riskResult');
+        res.style.display = "block";
+        if (val >= 85) {
+            res.style.background = "rgba(248, 81, 73, 0.2)";
+            res.style.border = "1px solid var(--danger-red)";
+            res.style.color = "#ffa39e";
+            res.innerText = "🚨 CRITICAL RISK: PPE REQUIRED";
+        } else {
+            res.style.background = "rgba(63, 185, 80, 0.2)";
+            res.style.border = "1px solid var(--success-green)";
+            res.style.color = "#aff5b4";
+            res.innerText = "✅ SAFE: Level within limits";
         }
+    }
 
-        // Run simulation every 2.5 seconds
-        setInterval(simulateNoise, 2500);
-    </script>
+    function ans(el, correct) {
+        document.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('correct', 'wrong'));
+        const f = document.getElementById('feedback');
+        if(correct) {
+            el.classList.add('correct');
+            f.innerText = "CORRECT! Stay Safe.";
+            f.style.color = "var(--success-green)";
+        } else {
+            el.classList.add('wrong');
+            f.innerText = "WRONG! Try Again.";
+            f.style.color = "var(--danger-red)";
+        }
+    }
+</script>
+
 </body>
 </html>
